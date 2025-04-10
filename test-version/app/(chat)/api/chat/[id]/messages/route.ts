@@ -1,10 +1,9 @@
 // /app/(chat)/api/chat/[id]/messages/route.ts
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { chat, message } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { createClient } from '@/utils/supabase/Server';
 
 // POST new message to chat
 export async function POST(
@@ -12,16 +11,18 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   const chatId = params.id;
-  const supabase = createRouteHandlerClient({ cookies });
   
-  // Verify user is authenticated
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    // Create Supabase client with proper cookie handling
+    const supabase = await createClient();
+    
+    // Verify user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Parse request body
     const { role, content } = await request.json();
     

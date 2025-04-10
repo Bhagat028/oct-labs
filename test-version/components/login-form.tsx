@@ -112,7 +112,17 @@ export default function LoginForm() {
               </Button>
               <Button 
                 type="button"
-                onClick={(e) => handleSubmit(e as any, 'signup')}
+                onClick={() => {
+                  const form = document.querySelector('form');
+                  if (form) {
+                    const actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = 'signup';
+                    form.appendChild(actionInput);
+                    form.requestSubmit();
+                  }
+                }}
                 className="mt-4 flex-1 py-2 font-medium"
                 variant="outline"
                 disabled={isLoading}

@@ -1,23 +1,23 @@
 // /app/(chat)/api/vote/route.ts
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { vote, chat } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
+import { createClient } from '@/utils/supabase/Server';
 
 // POST add/update vote
 export async function POST(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
-  
-  // Verify user is authenticated
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    // Create Supabase client with proper cookie handling
+    const supabase = await createClient();
+    
+    // Verify user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Parse request body
     const { chatId, messageId, isUpvoted } = await request.json();
     
@@ -90,16 +90,17 @@ export async function POST(request: Request) {
 
 // DELETE remove vote
 export async function DELETE(request: Request) {
-  const supabase = createRouteHandlerClient({ cookies });
-  
-  // Verify user is authenticated
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    // Create Supabase client with proper cookie handling
+    const supabase = await createClient();
+    
+    // Verify user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Parse URL parameters
     const url = new URL(request.url);
     const chatId = url.searchParams.get('chatId');
