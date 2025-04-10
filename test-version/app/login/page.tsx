@@ -1,10 +1,11 @@
-'use client'
-
-import { login, signup } from './actions'
+"use client"
 import LoginForm from '@/components/login-form'
 
-export default function LoginPage() {
+
+export default function loginpage(){
+
   return (
-    <LoginForm action={login} />
+    <LoginForm />
   )
+
 }
