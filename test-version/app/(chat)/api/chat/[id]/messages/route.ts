@@ -1,28 +1,26 @@
 // /app/(chat)/api/chat/[id]/messages/route.ts
+
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { chat, message } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { createClient } from '@/utils/supabase/Server';
-
-// POST new message to chat
+// POST: Add a new message to a chat
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   const chatId = params.id;
+  const supabase = await createClient();
   
-  try {
-    // Create Supabase client with proper cookie handling
-    const supabase = await createClient();
-    
-    // Verify user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  // Verify user is authenticated
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
+  try {
     // Parse request body
     const { role, content } = await request.json();
     
@@ -54,8 +52,7 @@ export async function POST(
       })
       .returning();
 
-    // If this is the first message and the chat title is "New Chat",
-    // update the chat title based on the user's message
+    // Update chat title if this is the first user message and title is "New Chat"
     if (role === 'user' && chatData[0].title === 'New Chat') {
       const shortTitle = content.slice(0, 30) + (content.length > 30 ? '...' : '');
       await db
@@ -69,6 +66,50 @@ export async function POST(
     console.error('Error adding message:', error);
     return NextResponse.json(
       { error: 'Failed to add message' },
+      { status: 500 }
+    );
+  }
+}
+
+// GET: Retrieve all messages for a chat
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const chatId = params.id;
+  const supabase = await createClient();
+  
+  // Verify user is authenticated
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    // Verify the chat belongs to the user
+    const chatData = await db
+      .select()
+      .from(chat)
+      .where(and(eq(chat.id, chatId), eq(chat.userId, user.id)))
+      .limit(1);
+
+    if (!chatData.length) {
+      return NextResponse.json({ error: 'Chat not found' }, { status: 404 });
+    }
+
+    // Get messages for this chat
+    const messages = await db
+      .select()
+      .from(message)
+      .where(eq(message.chatId, chatId))
+      .orderBy(message.createdAt);
+
+    return NextResponse.json(messages);
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch messages' },
       { status: 500 }
     );
   }
