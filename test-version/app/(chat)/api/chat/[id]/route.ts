@@ -11,6 +11,7 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
+  // Get the chat ID from params
   const chatId = params.id;
   const supabase = await createClient();
     

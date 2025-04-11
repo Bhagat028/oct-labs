@@ -10,7 +10,7 @@ export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const chatId = params.id;
+  const { id: chatId } = params;
   const supabase = await createClient();
   
   // Verify user is authenticated
@@ -76,7 +76,7 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const chatId = params.id;
+  const { id: chatId } = params;
   const supabase = await createClient();
   
   // Verify user is authenticated
