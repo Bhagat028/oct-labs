@@ -203,7 +203,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Message history */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto py-6 px-1">
         {loading ? loadingState : messages.length === 0 ? emptyState : (
           <MemoizedMessageList messages={messages} />
         )}
@@ -211,8 +211,10 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
       </div>
       
       {/* Message input */}
-      <div className="border-t p-4">
-        <MessageInput onSendMessage={sendMessage} disabled={sending} />
+      <div className="border-t py-4 px-6">
+        <div className="max-w-3xl mx-auto">
+          <MessageInput onSendMessage={sendMessage} disabled={sending} />
+        </div>
       </div>
     </div>
   );

@@ -17,23 +17,25 @@ export default function Chat() {
   const chatId = params?.id as string || "";
 
   return (
-    <div className="[--header-height:calc(--spacing(14))]">
+    <div className="flex h-screen flex-col">
       <SidebarProvider className="flex flex-col">
         <SiteHeader />
         <div className="flex flex-1">
           <AppSidebar />
           <SidebarInset>
-            <div className="flex flex-1 flex-col h-[calc(100vh-var(--header-height))]">
+          <div className="flex flex-1 flex-col h-[calc(100vh-var(--header-height))] w-full">
               {chatId ? (
                 <>
                   <ChatHeader chatId={chatId} />
-                  <ChatContainer chatId={chatId} />
+                  <div className="flex-1 overflow-hidden px-4">
+                    <ChatContainer chatId={chatId} />
+                  </div>
                 </>
               ) : (
-                <div className="flex flex-1 items-center justify-center">
-                  <div className="max-w-md space-y-4 text-center">
-                    <h3 className="text-lg font-medium">No chat selected</h3>
-                    <p className="text-muted-foreground">
+                <div className=" items-center justify-center p-6">
+                  <div className="max-w-md space-y-6 text-center">
+                    <h3 className="text-xl font-medium">No chat selected</h3>
+                    <p className="text-muted-foreground text-base">
                       Select a chat from the sidebar or start a new conversation.
                     </p>
                   </div>

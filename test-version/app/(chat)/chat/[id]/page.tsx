@@ -7,8 +7,9 @@ export default function ChatPage() {
   // This ensures the chat ID is passed to the Chat component
   // even though it also tries to retrieve it independently
   return (
-    <div>
-      <Chat />
-    </div>
+  <>
+  <Chat />
+  </>
+
   )
 } 

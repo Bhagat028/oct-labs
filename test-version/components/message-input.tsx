@@ -19,23 +19,25 @@ export function MessageInput({ onSendMessage, disabled = false }: MessageInputPr
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-2">
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type your message..."
-        className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        disabled={disabled}
-      />
-      <button
-        type="submit"
-        className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-        disabled={!message.trim() || disabled}
-      >
-        <Send className="h-4 w-4" />
-        <span className="sr-only">Send</span>
-      </button>
+    <form onSubmit={handleSubmit} className="relative">
+      <div className="overflow-hidden rounded-xl border border-input shadow-sm focus-within:ring-1 focus-within:ring-primary">
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Message Oct..."
+          className="w-full resize-none bg-background px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none pr-12"
+          disabled={disabled}
+        />
+        <button
+          type="submit"
+          className="absolute right-2 bottom-2 inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          disabled={!message.trim() || disabled}
+        >
+          <Send className="h-4 w-4" />
+          <span className="sr-only">Send</span>
+        </button>
+      </div>
     </form>
   );
 }

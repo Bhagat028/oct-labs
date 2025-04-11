@@ -14,25 +14,34 @@ type MessageListProps = {
 
 export function MessageList({ messages }: MessageListProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 max-w-3xl mx-auto">
       {messages.map((message) => (
         <div
           key={message.id}
           className={cn(
-            "flex items-start gap-3 rounded-lg p-4",
+            "flex flex-col rounded-lg p-5",
             message.role === "user"
-              ? "ml-auto max-w-[80%] bg-primary text-primary-foreground"
-              : "mr-auto max-w-[80%] bg-muted"
+              ? "bg-primary/5 border border-primary/10"
+              : "bg-muted/50"
           )}
         >
-          {/* Avatar or icon could go here */}
-          <div className="space-y-1">
-            <div className="text-sm font-medium">
-              {message.role === "user" ? "You" : "Assistant"}
+          <div className="flex items-start gap-3">
+            <div className={cn(
+              "flex-shrink-0 size-8 rounded-full flex items-center justify-center text-sm",
+              message.role === "user" 
+                ? "bg-primary text-primary-foreground" 
+                : "bg-muted-foreground/20 text-foreground"
+            )}>
+              {message.role === "user" ? "U" : "A"}
             </div>
-            <div className="whitespace-pre-wrap">{message.content}</div>
-            <div className="text-xs opacity-70">
-              {new Date(message.createdAt).toLocaleTimeString()}
+            <div className="space-y-2 flex-1">
+              <div className="text-sm font-medium">
+                {message.role === "user" ? "You" : "Assistant"}
+              </div>
+              <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
+              <div className="text-xs text-muted-foreground pt-1">
+                {new Date(message.createdAt).toLocaleTimeString()}
+              </div>
             </div>
           </div>
         </div>
