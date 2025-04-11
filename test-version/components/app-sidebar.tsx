@@ -30,132 +30,35 @@ import {
 } from "@/components/ui/sidebar"
 import { ChatList } from "@/components/chat-list"
 
+// Memoize the secondary navigation to prevent re-renders
+const MemoizedNavSecondary = React.memo(NavSecondary);
+
+// Memoize the chat list component to prevent it from re-rendering when the sidebar re-renders
+const MemoizedChatList = React.memo(ChatList);
+
+// Create a static data object outside the component to prevent recreation on each render
+const SECONDARY_NAV_ITEMS = [
+  {
+    title: "Support",
+    url: "#",
+    icon: LifeBuoy,
+  },
+  {
+    title: "Feedback",
+    url: "#",
+    icon: Send,
+  },
+];
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { userDetails } = useUserDetails();
   
-  const data = {
-    user: {
-      name: userDetails?.name || "User",
-      email: userDetails?.email || "user@example.com",
-      avatar: userDetails?.avatar || "NA",
-    },
-    // navMain: [
-    //   {
-    //     title: "Playground",
-    //     url: "#",
-    //     icon: SquareTerminal,
-    //     isActive: true,
-    //     items: [
-    //       {
-    //         title: "History",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Starred",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Settings",
-    //         url: "#",
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     title: "Models",
-    //     url: "#",
-    //     icon: Bot,
-    //     items: [
-    //       {
-    //         title: "Genesis",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Explorer",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Quantum",
-    //         url: "#",
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     title: "Documentation",
-    //     url: "#",
-    //     icon: BookOpen,
-    //     items: [
-    //       {
-    //         title: "Introduction",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Get Started",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Tutorials",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Changelog",
-    //         url: "#",
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     title: "Settings",
-    //     url: "#",
-    //     icon: Settings2,
-    //     items: [
-    //       {
-    //         title: "General",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Team",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Billing",
-    //         url: "#",
-    //       },
-    //       {
-    //         title: "Limits",
-    //         url: "#",
-    //       },
-    //     ],
-    //   },
-    // ],
-    navSecondary: [
-      {
-        title: "Support",
-        url: "#",
-        icon: LifeBuoy,
-      },
-      {
-        title: "Feedback",
-        url: "#",
-        icon: Send,
-      },
-    ],
-    projects: [
-      {
-        name: "Design Engineering",
-        url: "#",
-        icon: Frame,
-      },
-      {
-        name: "Sales & Marketing",
-        url: "#",
-        icon: PieChart,
-      },
-      {
-        name: "Travel",
-        url: "#",
-        icon: Map,
-      },
-    ],
-  };
+  // Memoize the user data to prevent recreation on each render
+  const userData = React.useMemo(() => ({
+    name: userDetails?.name || "User",
+    email: userDetails?.email || "user@example.com",
+    avatar: userDetails?.avatar || "NA",
+  }), [userDetails?.name, userDetails?.email, userDetails?.avatar]);
 
   return (
     <Sidebar
@@ -180,13 +83,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <ChatList />
-        {/* <NavMain items={data.navMain} /> */}
-        {/* <NavProjects projects={data.projects} /> */}
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <MemoizedChatList />
+        <MemoizedNavSecondary items={SECONDARY_NAV_ITEMS} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={userData} />
       </SidebarFooter>
     </Sidebar>
   )

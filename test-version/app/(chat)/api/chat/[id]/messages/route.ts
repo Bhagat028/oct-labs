@@ -5,22 +5,24 @@ import { db } from '@/lib/db';
 import { chat, message } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { createClient } from '@/utils/supabase/Server';
+
 // POST: Add a new message to a chat
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id: chatId } = params;
-  const supabase = await createClient();
-  
-  // Verify user is authenticated
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const params = await context.params;
+    const { id: chatId } = params;
+    const supabase = await createClient();
+    
+    // Verify user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Parse request body
     const { role, content } = await request.json();
     
@@ -74,19 +76,20 @@ export async function POST(
 // GET: Retrieve all messages for a chat
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id: chatId } = params;
-  const supabase = await createClient();
-  
-  // Verify user is authenticated
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const params = await context.params;
+    const { id: chatId } = params;
+    const supabase = await createClient();
+    
+    // Verify user is authenticated
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Verify the chat belongs to the user
     const chatData = await db
       .select()

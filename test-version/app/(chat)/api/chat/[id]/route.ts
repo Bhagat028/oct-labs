@@ -9,21 +9,22 @@ import { createClient } from '@/utils/supabase/Server';
 // GET single chat with its messages
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  // Get the chat ID from params
-  const chatId = params.id;
-  const supabase = await createClient();
-    
-  // Get the authenticated user
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-  if (authError || !user) {
-    console.error("Auth error:", authError);
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    // Get the chat ID from params
+    const params = await context.params;
+    const { id: chatId } = params;
+    const supabase = await createClient();
+      
+    // Get the authenticated user
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Get chat details, ensuring it belongs to the user
     const chatData = await db
       .select()
@@ -58,20 +59,21 @@ export async function GET(
 // DELETE chat and its messages
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const chatId = params.id;
-  const supabase = await createClient();
-  
-  // Verify user is authenticated
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
-  if (authError || !user) {
-    console.error("Auth error:", authError);
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const params = await context.params;
+    const { id: chatId } = params;
+    const supabase = await createClient();
+    
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Verify the chat belongs to the user
     const chatData = await db
       .select()
@@ -105,20 +107,21 @@ export async function DELETE(
 // PATCH to update chat details (like title)
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const chatId = params.id;
-  const supabase = await createClient();
-  
-  // Verify user is authenticated
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
-  if (authError || !user) {
-    console.error("Auth error:", authError);
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const params = await context.params;
+    const { id: chatId } = params;
+    const supabase = await createClient();
+    
+    // Verify user is authenticated
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Parse request body
     const { title, visibility } = await request.json();
     
