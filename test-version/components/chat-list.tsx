@@ -7,6 +7,17 @@ import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "@/components/ui
 import { useRouter, usePathname } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type Chat = {
   id: string;
@@ -112,8 +123,8 @@ export function ChatList() {
     }
   };
 
-  const deleteChat = async (chatId: string, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent navigation when clicking delete
+  const deleteChat = async (chatId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation(); // Prevent navigation when clicking delete
     
     try {
       const response = await fetch(`/api/chat/${chatId}`, {
@@ -216,15 +227,31 @@ export function ChatList() {
                         >
                           <Edit className="h-4 w-4 text-muted-foreground hover:text-primary" />
                         </span>
-                        <span 
-                          onClick={(e) => deleteChat(chat.id, e)}
-                          className="cursor-pointer"
-                          aria-label="Delete chat"
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                        </span>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <span 
+                              className="cursor-pointer"
+                              aria-label="Delete chat"
+                              role="button"
+                              tabIndex={0}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
+                            </span>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete chat</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this chat? This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => deleteChat(chat.id)}>Delete</AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </SidebarMenuButton>
                   )}
