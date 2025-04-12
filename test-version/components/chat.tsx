@@ -1,29 +1,29 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { ChatHeader } from "@/components/chat-header"
 import { ChatContainer } from "@/components/chat-container"
 import { useParams } from "next/navigation"
 
 export const iframeHeight = "800px"
-
 export const description = "Chat interface with sidebar, header and message area."
 
 export default function Chat() {
-  const params = useParams();
-  const chatId = params?.id as string || "";
+  const params = useParams()
+  const chatId = (params?.id as string) || ""
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <SidebarProvider className="flex flex-col flex-1 overflow-hidden">
+        {/* Sticky header at top */}
         <SiteHeader />
+
+        {/* Main content area: sidebar + chat */}
         <div className="flex flex-1 overflow-hidden">
           <AppSidebar />
+
           <SidebarInset>
-            <div className="flex flex-1 flex-col h-[calc(100vh-var(--header-height))] w-full overflow-hidden">
+            <div className="flex flex-1 flex-col w-full overflow-hidden">
               {chatId ? (
                 <>
                   <ChatHeader chatId={chatId} />
