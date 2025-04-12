@@ -17,13 +17,13 @@ export default function Chat() {
   const chatId = params?.id as string || "";
 
   return (
-    <div className="flex h-screen flex-col">
-      <SidebarProvider className="flex flex-col">
+    <div className="h-screen flex flex-col">
+      <SidebarProvider className="flex flex-col flex-1 overflow-hidden">
         <SiteHeader />
-        <div className="flex flex-1">
+        <div className="flex flex-1 overflow-hidden">
           <AppSidebar />
           <SidebarInset>
-          <div className="flex flex-1 flex-col h-[calc(100vh-var(--header-height))] w-full">
+            <div className="flex flex-1 flex-col h-[calc(100vh-var(--header-height))] w-full overflow-hidden">
               {chatId ? (
                 <>
                   <ChatHeader chatId={chatId} />
@@ -32,7 +32,7 @@ export default function Chat() {
                   </div>
                 </>
               ) : (
-                <div className=" items-center justify-center p-6">
+                <div className="flex items-center justify-center p-6">
                   <div className="max-w-md space-y-6 text-center">
                     <h3 className="text-xl font-medium">No chat selected</h3>
                     <p className="text-muted-foreground text-base">

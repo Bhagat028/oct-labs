@@ -149,10 +149,10 @@ export function ChatList() {
   }, [chats.length]);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 overflow-hidden">
       {/* Chat History */}
-      <div>
-        <div className="flex items-center justify-between px-3 mb-1">
+      <div className="overflow-hidden">
+        <div className="flex items-center justify-between px-3 mb-1 relative z-10">
           <h3 className="text-xs font-medium text-muted-foreground">Recent Chats</h3>
           <span 
             onClick={refreshChats}
@@ -169,7 +169,7 @@ export function ChatList() {
             <div className="animate-pulse">Loading chats...</div>
           </div>
         ) : (
-          <SidebarMenu>
+          <SidebarMenu className="overflow-hidden">
             {chats.length === 0 ? (
               <div className="px-3 py-2 text-sm text-muted-foreground">
                 No chats yet. Create a new chat to get started.

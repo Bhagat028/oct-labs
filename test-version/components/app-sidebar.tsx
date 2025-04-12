@@ -2,10 +2,12 @@
 
 import * as React from "react"
 import {
+  AudioWaveform,
   BookOpen,
   Bot,
   Command,
   Frame,
+  GalleryVerticalEnd,
   LifeBuoy,
   Map,
   PieChart,
@@ -13,7 +15,7 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react"
-import { useUserDetails  } from "@/components/avatars"
+import { useUserDetails } from "@/components/avatars"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
@@ -24,9 +26,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar"
 import { ChatList } from "@/components/chat-list"
 
@@ -62,33 +62,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar
-      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
+      collapsible="icon"
+      className="relative overflow-hidden"
       {...props}
     >
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Command className="size-4" />
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Oct </span>
-                  <span className="truncate text-xs">Enterprise</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="absolute top-0 left-0 right-0 z-10 overflow-hidden">
+        <div className="flex items-center p-2 overflow-hidden">
+          <div className="flex items-center space-x-2 overflow-hidden">
+            <Command className="h-5 w-5 flex-shrink-0" />
+            <div className="overflow-hidden">
+              <div className="text-sm font-medium truncate">Oct</div>
+              <div className="text-xs truncate">Enterprise</div>
+            </div>
+          </div>
+        </div>
       </SidebarHeader>
-      <SidebarContent>
-        <MemoizedChatList />
+      <SidebarContent className="flex flex-col pt-14 overflow-hidden relative">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+          <div className="transition-opacity duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
+            <MemoizedChatList />
+          </div>
+        </div>
         <MemoizedNavSecondary items={SECONDARY_NAV_ITEMS} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userData} />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }
