@@ -1,10 +1,9 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { ChatHeader } from "@/components/chat-header"
 import { ChatContainer } from "@/components/chat/chat-container"
 import { useParams } from "next/navigation"
-
+import { SiteHeader } from "@/components/site-header"
 export const iframeHeight = "800px"
 export const description = "Chat interface with sidebar, header and message area."
 
@@ -14,10 +13,9 @@ export default function Chat() {
 
   return (
 <div className="h-screen flex flex-col overflow-hidden">
+  
 <SidebarProvider className="flex flex-col flex-1 overflow-hidden">
-        {/* Sticky header at top */}
-        <SiteHeader />
-
+<SiteHeader/>
         {/* Main content area: sidebar + chat */}
         <div className="flex flex-1 overflow-hidden">
           <AppSidebar />
