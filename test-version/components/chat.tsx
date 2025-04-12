@@ -2,7 +2,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { ChatHeader } from "@/components/chat-header"
-import { ChatContainer } from "@/components/chat-container"
+import { ChatContainer } from "@/components/chat/chat-container"
 import { useParams } from "next/navigation"
 
 export const iframeHeight = "800px"
