@@ -72,11 +72,11 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent className="flex flex-col overflow-hidden relative">
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="transition-opacity duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
-            <MemoizedChatList />
-          </div>
-        </div>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="transition-opacity duration-200 ease-linear group-data-[collapsible=icon]:opacity-0">
+        <MemoizedChatList />
+      </div>
+    </div>
 
         <MemoizedNavSecondary items={SECONDARY_NAV_ITEMS} className="mt-auto" />
       </SidebarContent>

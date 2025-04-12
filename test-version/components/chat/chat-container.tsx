@@ -1,4 +1,3 @@
-// components/chat/ChatContainer.tsx
 "use client";
 
 import React from "react";
@@ -14,7 +13,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
   const { messages, loading, sending, sendMessage } = useChat(chatId);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col h-full overflow-hidden">
       <MessagePanel messages={messages} loading={loading} />
       <MessageComposer onSendMessage={sendMessage} disabled={sending} />
     </div>

@@ -13,8 +13,8 @@ export default function Chat() {
   const chatId = (params?.id as string) || ""
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <SidebarProvider className="flex flex-col flex-1 overflow-hidden">
+<div className="h-screen flex flex-col overflow-hidden">
+<SidebarProvider className="flex flex-col flex-1 overflow-hidden">
         {/* Sticky header at top */}
         <SiteHeader />
 
@@ -27,8 +27,8 @@ export default function Chat() {
               {chatId ? (
                 <>
                   <ChatHeader chatId={chatId} />
-                  <div className="flex-1 overflow-hidden px-4">
-                    <ChatContainer chatId={chatId} />
+                  <div className="flex-1 overflow-hidden px-4 min-h-0">
+                  <ChatContainer chatId={chatId} />
                   </div>
                 </>
               ) : (

@@ -35,7 +35,8 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b shadow-sm shrink-0">
+// In SiteHeader.tsx, ensure the sticky behavior works correctly
+<header className="bg-background sticky top-0 z-50 flex w-full items-center border-b shadow-sm shrink-0">
       <div className="flex h-[var(--header-height)] w-full items-center gap-2 px-4">
         <Button
           className="h-8 w-8"
