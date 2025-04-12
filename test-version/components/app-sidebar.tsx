@@ -70,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <div className="flex items-center p-2 overflow-hidden">
           <div className="flex items-center space-x-2 overflow-hidden">
             <Command className="h-5 w-5 flex-shrink-0" />
-            <div className="overflow-hidden">
+            <div className="overflow-hidden group-data-[collapsible=icon]:hidden">
               <div className="text-sm font-medium truncate">Oct</div>
               <div className="text-xs truncate">Enterprise</div>
             </div>
