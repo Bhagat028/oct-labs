@@ -30,7 +30,7 @@ type MessageComposerProps = {
 
 export const MessageComposer = React.memo(({ onSendMessage, disabled }: MessageComposerProps) => {
   return (
-    <div className="border-t py-4 px-6">
+    <div className="py-4">
       <div className="max-w-3xl mx-auto">
         <MessageInput onSendMessage={onSendMessage} disabled={disabled} />
       </div>
