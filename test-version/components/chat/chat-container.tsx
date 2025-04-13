@@ -11,20 +11,17 @@ type ChatContainerProps = {
 };
 export function ChatContainer({ chatId }: ChatContainerProps) {
   const { messages, loading, sending, sendMessage } = useChat(chatId);
-  const [sidebarWidth, setSidebarWidth] = React.useState(280); // Default width
+  const [sidebarWidth, setSidebarWidth] = React.useState(280);
   
   React.useEffect(() => {
-    const sidebar = document.querySelector('[data-sidebar]'); // Add this attribute to your sidebar
+    const sidebar = document.querySelector('[data-sidebar]');
     if (!sidebar) return;
     
     const updateWidth = () => {
       setSidebarWidth(sidebar.getBoundingClientRect().width);
     };
     
-    // Update once on mount
     updateWidth();
-    
-    // Add resize observer to track sidebar width changes
     const resizeObserver = new ResizeObserver(updateWidth);
     resizeObserver.observe(sidebar);
     
@@ -37,11 +34,12 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
         <MessagePanel messages={messages} loading={loading} />
       </div>
       
+      {/* Transparent container with just the input field */}
       <div 
-        className="fixed bottom-0 right-0 z-10 border-t bg-background"
+        className="fixed bottom-0 right-0 z-10"
         style={{ left: `${sidebarWidth}px` }}
       >
-        <div className="px-4 lg:px-6">
+        <div className="px-4 py-4 lg:px-6">
           <MessageComposer onSendMessage={sendMessage} disabled={sending} />
         </div>
       </div>

@@ -20,13 +20,13 @@ export function MessageInput({ onSendMessage, disabled = false }: MessageInputPr
 
   return (
     <form onSubmit={handleSubmit} className="relative">
-      <div className="overflow-hidden rounded-xl border border-input shadow-sm focus-within:ring-1 focus-within:ring-primary">
+      <div className="overflow-hidden rounded-xl border border-input bg-background/90 backdrop-blur-sm shadow-md focus-within:ring-1 focus-within:ring-primary">
         <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Message Oct..."
-          className="w-full resize-none bg-background px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none pr-12"
+          className="w-full resize-none bg-transparent px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none pr-12"
           disabled={disabled}
         />
         <button
