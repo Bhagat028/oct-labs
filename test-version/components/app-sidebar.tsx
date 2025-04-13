@@ -55,7 +55,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="relative overflow-hidden" 
+      className="h-screen fixed left-0 top-0 z-40" 
       {...props}
     >
       {/* Remove `absolute top-0` so it doesn't overlap the sticky SiteHeader */}

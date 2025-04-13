@@ -12,37 +12,21 @@ export default function Chat() {
   const chatId = (params?.id as string) || ""
 
   return (
-<div className="h-screen flex flex-col overflow-hidden">
-  
-<SidebarProvider className="flex flex-col flex-1 overflow-hidden">
-<SiteHeader/>
-        {/* Main content area: sidebar + chat */}
-        <div className="flex flex-1 overflow-hidden">
-          <AppSidebar />
-
-          <SidebarInset>
-            <div className="flex flex-1 flex-col w-full overflow-hidden">
-              {chatId ? (
-                <>
-                  <ChatHeader chatId={chatId} />
-                  <div className="flex-1 overflow-hidden px-4 min-h-0">
-                  <ChatContainer chatId={chatId} />
-                  </div>
-                </>
-              ) : (
-                <div className="flex items-center justify-center p-6">
-                  <div className="max-w-md space-y-6 text-center">
-                    <h3 className="text-xl font-medium">No chat selected</h3>
-                    <p className="text-muted-foreground text-base">
-                      Select a chat from the sidebar or start a new conversation.
-                    </p>
-                  </div>
-                </div>
-              )}
+    <SidebarProvider>
+      <div className="flex h-screen overflow-hidden">
+        <AppSidebar variant="inset" className="h-screen" />
+        <SidebarInset className="flex flex-col h-screen w-full">
+          <SiteHeader />
+          <div className="flex-1 overflow-y-auto">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <ChatHeader chatId={chatId} />
+              <div className="px-4 lg:px-6">
+                <ChatContainer chatId={chatId} />
+              </div>
             </div>
-          </SidebarInset>
-        </div>
-      </SidebarProvider>
-    </div>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   )
 }

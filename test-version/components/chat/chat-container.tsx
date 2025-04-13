@@ -13,7 +13,7 @@ export function ChatContainer({ chatId }: ChatContainerProps) {
   const { messages, loading, sending, sendMessage } = useChat(chatId);
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full">
       <MessagePanel messages={messages} loading={loading} />
       <MessageComposer onSendMessage={sendMessage} disabled={sending} />
     </div>
