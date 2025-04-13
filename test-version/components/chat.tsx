@@ -1,6 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { ChatHeader } from "@/components/chat-header"
+// import { ChatHeader } from "@/components/chat-header"
 import { ChatContainer } from "@/components/chat/chat-container"
 import { useParams } from "next/navigation"
 import { SiteHeader } from "@/components/site-header"
@@ -19,7 +19,7 @@ export default function Chat() {
           <SiteHeader />
           <div className="flex-1 overflow-y-auto">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <ChatHeader chatId={chatId} />
+              {/* <ChatHeader chatId={chatId} /> */}
               <div className="px-4 lg:px-6">
                 <ChatContainer chatId={chatId} />
               </div>

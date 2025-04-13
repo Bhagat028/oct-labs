@@ -1,22 +1,19 @@
 "use client"
 
 import { SidebarIcon, Plus } from "lucide-react"
-import { useRouter } from "next/navigation"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import { useRouter, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useSidebar } from "@/components/ui/sidebar"
+import { ChatTitle } from "@/components/chat-header"
 
 export function SiteHeader() {
   const { toggleSidebar } = useSidebar()
   const router = useRouter()
+  const pathname = usePathname()
+  
+  // Extract chat ID from the URL path
+  const chatId = pathname?.match(/\/chat\/([^\/]+)/)?.[1] || undefined
 
   const createNewChat = async () => {
     try {
@@ -35,8 +32,7 @@ export function SiteHeader() {
   }
 
   return (
-// In SiteHeader.tsx, ensure the sticky behavior works correctly
-<header className="bg-background sticky top-0 z-50 flex w-full items-center border-b shadow-sm shrink-0">
+    <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b shadow-sm shrink-0">
       <div className="flex h-[var(--header-height)] w-full items-center gap-2 px-4">
         <Button
           className="h-8 w-8"
@@ -51,9 +47,14 @@ export function SiteHeader() {
           <Plus className="mr-2 h-4 w-4" />
           New Chat
         </Button>
-        {/* <SearchForm className="w-full sm:ml-auto sm:w-auto" /> */}
+        
+        {/* Center the chat title */}
+        <div className="absolute left-0 right-0 flex justify-center pointer-events-none">
+          <div className="pointer-events-auto">
+            <ChatTitle chatId={chatId} />
+          </div>
+        </div>
       </div>
     </header>
   )
 }
-
