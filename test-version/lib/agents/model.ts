@@ -1,9 +1,10 @@
 import { ChatOpenAI } from "@langchain/openai";
-// Initialize LLMs
-const chatllm = new ChatOpenAI({
-    modelName: 'openrouter/optimus-alpha',
+import { ChatGroq } from "@langchain/groq";
+
+const superviourllm = new ChatOpenAI({
+    modelName: 'openai/gpt-4.1',
     temperature: 0.2,
-    openAIApiKey: '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',
+    openAIApiKey: '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',
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
@@ -13,10 +14,11 @@ const chatllm = new ChatOpenAI({
     },
   });
 
-  const supervisorllm = new ChatOpenAI({
-    modelName: 'qwen/qwen-2.5-72b-instruct',
-    temperature: 0.3,
-    openAIApiKey: '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',
+
+  const  SQLllm = new ChatOpenAI({
+    modelName: 'meta-llama/llama-3.3-70b-instruct',
+    temperature: 0.2,
+    openAIApiKey: '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',
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
@@ -26,4 +28,17 @@ const chatllm = new ChatOpenAI({
     },
   });
 
-  export { chatllm,supervisorllm };
+  const Pythonllm = new ChatOpenAI({
+    modelName: 'meta-llama/llama-3.3-70b-instruct',
+    temperature: 0.2,
+    openAIApiKey: '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',
+    configuration: {
+      baseURL: "https://openrouter.ai/api/v1",
+      defaultHeaders: {
+        "HTTP-Refererd": "https://dashchat.xyz/",
+        "X-Title": "MCP Integration App"
+      },
+    },
+  });
+
+  export { superviourllm, SQLllm, Pythonllm };

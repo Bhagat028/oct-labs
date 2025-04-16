@@ -2,7 +2,7 @@ import { BaseMessage } from "@langchain/core/messages";
 import { Annotation } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { agentStateModifier } from "./supervisor";
-import { chatllm } from "./model";
+import { SQLllm,Pythonllm } from "./model";
 import { runAgentNode } from "./supervisor";
 import { pgTools, pythonTools } from "./mcp-nodes";
 
@@ -26,12 +26,12 @@ export const ResearchTeamState = Annotation.Root({
 
 export const pythonNode = (state: typeof ResearchTeamState.State) => {
     const stateModifier = agentStateModifier(
-      "You are a Python expert who can execute Python code to analyze data and solve problems.",
+      "You are a Python expert who can execute Python code to analyze data and solve problems",
       pythonTools,
       state.team_members ?? ["PythonExpert"],
     )
     const pythonAgent = createReactAgent({
-      llm: chatllm,
+      llm: Pythonllm,
       tools: pythonTools,
       stateModifier,
     })
@@ -45,7 +45,7 @@ export const pythonNode = (state: typeof ResearchTeamState.State) => {
       state.team_members ?? ["DatabaseExpert"],
     )
     const pgAgent = createReactAgent({
-      llm: chatllm,
+      llm: SQLllm,
       tools: pgTools,
       stateModifier,
     })
