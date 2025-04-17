@@ -14,7 +14,7 @@ export async function createResearchGraph() {
       " respond with the worker to act next. Each worker will perform a" +
       " task and respond  with their results and status. When finished," +
       " respond with FINISH.\n\n" +
-      "Give clear instructions and choose strategically to minimize steps.",
+      "Give clear instructions in points and choose strategically to minimize steps.",
     ["PythonExpert", "DatabaseExpert"],
   );
   

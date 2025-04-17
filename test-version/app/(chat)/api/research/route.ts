@@ -1,15 +1,12 @@
 // app/(chat)/api/research/route.ts
 
 import { HumanMessage } from "@langchain/core/messages";
-import { createResearchGraph } from "@/lib/agents/index"; // adjust your path accordingly
+import { createResearchGraph } from "@/lib/agents/index";
 
 export async function POST(req: Request) {
   try {
-    // Parse and log the request body for debugging.
+    // 1) pull out the incoming question
     const body = await req.json().catch(() => ({}));
-    console.log("Request body:", body);
-    
-    // If the key might have extra whitespace, find the key that equals "question" after trimming.
     let question: string | undefined;
     for (const key in body) {
       if (key.trim() === "question") {
@@ -17,69 +14,49 @@ export async function POST(req: Request) {
         break;
       }
     }
-    
-    // Use a fallback question if none is provided.
     const inputQuestion =
-      (question && typeof question === "string" && question.trim()) ||
+      (typeof question === "string" && question.trim()) ||
       "How many employees are with the company for more than 4 years";
-    
-    console.log("Input question:", inputQuestion);
-    
-    // Create the research chain using your helper.
+
+    // 2) build & kick off your research graph
     const researchChain = await createResearchGraph();
-    
-    // Start the chain stream with the human message.
-    const streamResults = researchChain.stream(
-      {
-        messages: [new HumanMessage(inputQuestion)],
-      },
+    const stream = researchChain.stream(
+      { messages: [new HumanMessage(inputQuestion)] },
       { recursionLimit: 100 }
     );
-    
-    let lastContent: string | null = null;
-    
-    // Process the streamed outputs with enhanced error handling.
-    for await (const output of await streamResults) {
-      console.log("Stream output:", JSON.stringify(output, null, 2));
-      
-      // Wrap the property access in a try-catch to log any errors in the output processing.
-      try {
-        if (!output?.__end__) {
-          if (output?.PythonExpert?.messages?.[0]?.content) {
-            lastContent = output.PythonExpert.messages[0].content;
-          } else if (output?.DatabaseExpert?.messages?.[0]?.content) {
-            lastContent = output.DatabaseExpert.messages[0].content;
-          }
-          // Check if the supervisor signals finish.
-          if (output?.supervisor?.next === "FINISH") {
-            break;
-          }
-        }
-      } catch (innerError) {
-        console.error("Error processing stream output:", output, innerError);
+
+    let dbResult: any = null;
+    let analysisSummary: any = null;
+
+    // 3) consume the stream & pick off the two pieces of state
+    for await (const output of await stream) {
+      if (output.DatabaseExpert?.dbResult) {
+        dbResult = output.DatabaseExpert.dbResult;
+      }
+      if (output.PythonExpert?.analysisSummary) {
+        analysisSummary = output.PythonExpert.analysisSummary;
+      }
+      if (output.supervisor?.next === "FINISH") {
+        break;
       }
     }
-    
-    console.log("Raw final result content:", lastContent);
-    
-    // Remove agent labels (e.g., [DatabaseExpert] or [PythonExpert]) from the final content.
-    let cleanResult = lastContent;
-    if (cleanResult) {
-      cleanResult = cleanResult.replace(/\[(DatabaseExpert|PythonExpert)\]\s*/g, "").trim();
-    }
-    
-    console.log("Cleaned final result content:", cleanResult);
-    
-    // Return the cleaned final result as JSON.
-    return new Response(JSON.stringify({ result: cleanResult }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+
+    // 4) return just the two objects your UI cares about
+    return new Response(
+      JSON.stringify({ dbResult, analysisSummary }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Error processing research chain:", error);
     return new Response(
       JSON.stringify({ error: "Error processing request" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
     );
   }
 }
