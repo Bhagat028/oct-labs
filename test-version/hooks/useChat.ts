@@ -90,7 +90,7 @@ export function useChat(chatId: string) {
       // Send AI response to API
       await messageService.sendUserMessage({
         role: "assistant",
-        content: aiResponse.content,
+        content: aiResponse.result,
         chatId,
         id: `temp-${Date.now() + 1}`,
         createdAt: new Date().toISOString(),

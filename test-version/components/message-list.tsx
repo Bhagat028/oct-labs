@@ -1,5 +1,7 @@
-// components/chat/message-list.tsx
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 type Message = {
   id: string;
@@ -13,39 +15,62 @@ type MessageListProps = {
 };
 
 export function MessageList({ messages }: MessageListProps) {
+  const endOfMessagesRef = useRef<HTMLDivElement>(null);
+  
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
-      {messages.map((message) => (
-        <div
+    <div className="space-y-6 max-w-3xl mx-auto px-4">
+      {messages.map((message, index) => (
+        <motion.div
           key={message.id}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: index * 0.1 }}
           className={cn(
-            "flex flex-col rounded-lg p-5",
-            message.role === "user"
-              ? "bg-primary/5 border border-primary/10"
-              : "bg-muted/50"
+            "flex w-full",
+            message.role === "user" ? "justify-end" : "justify-start"
           )}
         >
-          <div className="flex items-start gap-3">
-            <div className={cn(
-              "flex-shrink-0 size-8 rounded-full flex items-center justify-center text-sm",
-              message.role === "user" 
-                ? "bg-primary text-primary-foreground" 
-                : "bg-muted-foreground/20 text-foreground"
-            )}>
-              {message.role === "user" ? "U" : "A"}
-            </div>
-            <div className="space-y-2 flex-1">
-              <div className="text-sm font-medium">
-                {message.role === "user" ? "You" : "Assistant"}
+          <div
+            className={cn(
+              "flex flex-col max-w-[85%] rounded-2xl shadow-sm",
+              message.role === "user"
+                ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-tr-none"
+                : "bg-gradient-to-br from-muted/80 to-muted rounded-tl-none border border-border/30"
+            )}
+          >
+            <div className="flex items-start gap-3 p-4">
+              <div className={cn(
+                "flex-shrink-0 size-10 rounded-full flex items-center justify-center text-sm font-medium shadow-sm",
+                message.role === "user" 
+                  ? "bg-primary-foreground text-primary" 
+                  : "bg-background text-foreground"
+              )}>
+                {message.role === "user" ? "You" : "AI"}
               </div>
-              <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
-              <div className="text-xs text-muted-foreground pt-1">
-                {new Date(message.createdAt).toLocaleTimeString()}
+              <div className="space-y-2 flex-1 pt-1">
+                <div className="text-sm font-semibold tracking-tight">
+                  {message.role === "user" ? "You" : "Assistant"}
+                </div>
+                <div className="prose prose-base dark:prose-invert max-w-none text-[15px] leading-relaxed [&>*:not(:first-child)]:mt-3">
+                <ReactMarkdown>{message.content}</ReactMarkdown>
+              </div>
+
+
+
+                <div className="text-[11px] opacity-70 pt-1 font-medium">
+                  {new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       ))}
+      <div ref={endOfMessagesRef} />
     </div>
   );
 }

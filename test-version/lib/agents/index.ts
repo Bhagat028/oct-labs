@@ -1,9 +1,9 @@
 // lib/researchGraph.ts
-import { SQLllm,Pythonllm,superviourllm } from "./model"; // adjust your import paths as needed
+import { superviourllm } from "./model"; // adjust your import paths as needed
 import { createTeamSupervisor } from "./supervisor";
 import { StateGraph, END, START } from "@langchain/langgraph";
 import { ResearchTeamState } from "./ResearchTeamState";
-import { pgNode, pythonNode } from "./ResearchTeamState";
+import { pgNode, pythonNode, summaryNode,  } from "./ResearchTeamState";
 
 export async function createResearchGraph() {
   // Create the supervisor agent with your configured prompt and team members
@@ -15,7 +15,7 @@ export async function createResearchGraph() {
       " task and respond  with their results and status. When finished," +
       " respond with FINISH.\n\n" +
       "Give clear instructions in points and choose strategically to minimize steps.",
-    ["PythonExpert", "DatabaseExpert"],
+    ["DatabaseExpert", "PythonExpert","DataSummarizer", ],
   );
   
   // Build the state graph with your research nodes and supervisor
@@ -23,12 +23,14 @@ export async function createResearchGraph() {
     .addNode("DatabaseExpert", pgNode)
     .addNode("supervisor", supervisorAgent)
     .addNode("PythonExpert", pythonNode)
+    .addNode("DataSummarizer", summaryNode)
     // Define the control flow between nodes
     .addEdge("DatabaseExpert", "supervisor")
     .addEdge("PythonExpert", "supervisor")
     .addConditionalEdges("supervisor", (x) => x.next, {
       DatabaseExpert: "DatabaseExpert",
       PythonExpert: "PythonExpert",
+      DataSummarizer: "DataSummarizer",
       FINISH: END,
     })
     .addEdge(START, "supervisor");
