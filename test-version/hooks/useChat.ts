@@ -1,4 +1,3 @@
-// hooks/useChat.tsx
 import { useState, useCallback, useEffect, useRef } from "react";
 import { messageService } from "@/services/messageService";
 import { messageCache } from "@/utils/messageCache";
@@ -17,12 +16,16 @@ export function useChat(chatId: string) {
   const [loading, setLoading] = useState(!cachedData);
   const [sending, setSending] = useState(false);
   const previousChatIdRef = useRef<string | null>(null);
+  const fetchInProgressRef = useRef<boolean>(false);
 
-  // Fetch messages function
+  // Optimized fetch messages function
   const fetchMessages = useCallback(async (forceFetch = false) => {
-    // Skip fetching logic
+    // Prevent concurrent fetches for the same chat
+    if (fetchInProgressRef.current) return;
+    
     const isCacheValid = messageCache.isValid(chatId);
     
+    // Skip fetching logic with improved condition checks
     if (!forceFetch && 
         ((chatId === previousChatIdRef.current && !loading) || 
         (isCacheValid && !sending))) {
@@ -33,17 +36,25 @@ export function useChat(chatId: string) {
       return;
     }
     
+    fetchInProgressRef.current = true;
     previousChatIdRef.current = chatId;
-    setLoading(!isCacheValid);
+    
+    if (!isCacheValid) {
+      setLoading(true);
+    }
     
     try {
       const data = await messageService.fetchMessages(chatId);
-      messageCache.set(chatId, data);
-      setMessages(data);
+      // Only update if this is still the active chat
+      if (chatId === previousChatIdRef.current) {
+        messageCache.set(chatId, data);
+        setMessages(data);
+      }
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error(`Error fetching messages for chat ${chatId}:`, error);
     } finally {
       setLoading(false);
+      fetchInProgressRef.current = false;
     }
   }, [chatId, loading, sending, cachedData]);
 
@@ -61,28 +72,29 @@ export function useChat(chatId: string) {
     }
   }, [chatId, fetchMessages, cachedData]);
 
-  // Send message function
+  // Optimized send message function
   const sendMessage = useCallback(async (content: string) => {
-    if (!content.trim() || sending) return;
+    const trimmedContent = content.trim();
+    if (!trimmedContent || sending) return;
     
     setSending(true);
 
-    try {
-      // Create optimistic message
-      const optimisticUserMsg: Message = {
-        id: `temp-${Date.now()}`,
-        chatId,
-        role: "user",
-        content,
-        createdAt: new Date().toISOString(),
-      };
-      
-      // Update UI optimistically
-      setMessages(prev => [...prev, optimisticUserMsg]);
-      messageCache.addMessage(chatId, optimisticUserMsg);
+    // Create optimistic message
+    const optimisticUserMsg: Message = {
+      id: `temp-${Date.now()}`,
+      chatId,
+      role: "user",
+      content: trimmedContent,
+      createdAt: new Date().toISOString(),
+    };
+    
+    // Update UI optimistically
+    setMessages(prev => [...prev, optimisticUserMsg]);
+    messageCache.addMessage(chatId, optimisticUserMsg);
 
+    try {
       // Get AI response
-      const aiResponse = await messageService.getAIResponse(content);
+      const aiResponse = await messageService.getAIResponse(trimmedContent);
 
       // Send user message to API
       await messageService.sendUserMessage(optimisticUserMsg);
@@ -102,11 +114,25 @@ export function useChat(chatId: string) {
       setMessages(refreshedMessages);
     } catch (error) {
       console.error('Error in message exchange:', error);
+      
+      // Rollback optimistic update on error - UI state only
+      setMessages(prev => prev.filter(msg => msg.id !== optimisticUserMsg.id));
+      
+      // Let the next regular fetch handle restoring the cache
+      // or fetch immediately to restore proper state
+      fetchMessages(true);
+      
       alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setSending(false);
     }
-  }, [chatId, sending]);
+  }, [chatId, sending, fetchMessages]);
 
-  return { messages, loading, sending, sendMessage };
+  return { 
+    messages, 
+    loading, 
+    sending, 
+    sendMessage,
+    refreshMessages: () => fetchMessages(true)
+  };
 }
