@@ -1,5 +1,7 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatGroq } from "@langchain/groq";
+import { ChatCerebras } from "@langchain/cerebras";
+const cerebras_api_key = "csk-j54r63jt99m6rw43evwtv9ek3wr2pwtcndhh9h585fettw4m"
 const groq_api_key = "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";
 const superviourllm = new ChatOpenAI({
     modelName: 'openai/gpt-4.1',
@@ -34,8 +36,17 @@ const superviourllm = new ChatOpenAI({
 // });
 
 
+// const cerebrasllm = new ChatCerebras({
+//   apiKey: cerebras_api_key,
+//   model: "llama-3.3-70b",
+//   temperature: 0.2,
+//   maxTokens: 1000,
+//   maxRetries: 2,
+//   // other params...
+// });
+
   const  SQLllm = new ChatOpenAI({
-    modelName: 'openai/gpt-4o-mini',
+    modelName: 'meta-llama/llama-3.3-70b-instruct',
     temperature: 0.2,
     maxTokens: 1000,
     openAIApiKey: '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',
