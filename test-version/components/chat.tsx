@@ -13,6 +13,7 @@ export default function Chat() {
 
   return (
     <SidebarProvider>
+      
       <div className="flex h-screen overflow-hidden">
         <AppSidebar variant="inset" className="h-screen" />
         <SidebarInset className="flex flex-col h-screen w-full">

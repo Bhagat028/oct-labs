@@ -25,7 +25,6 @@ class ApiCache {
         this.cache.delete(oldestKey);
       }
     }
-    
     // Add to cache and move to "newest" position
     this.cache.delete(key); // Remove if exists
     this.cache.set(key, { data, timestamp: Date.now() });
