@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       
       // Get session and save URL - with error handling
       try {
-        const session = await getSession() as IronSessionWithData;
+        const session = await getSession() as unknown as IronSessionWithData;
         session.databaseUrl = url;
         session.userId = user.id;
         await session.save();

@@ -55,7 +55,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
-    "drizzle-kit": "^0.30.6",
+    "drizzle-kit": "^0.31.0",
     "mini-css-extract-plugin": "^2.9.2",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.3",
