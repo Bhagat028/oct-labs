@@ -4,11 +4,27 @@ import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { agentStateModifier } from "./supervisor";
 import { SQLllm, Pythonllm, draftllm } from "./model";
 import { runAgentNode } from "./supervisor";
-import { pgTools, pythonTools } from "./mcp-nodes";
+import { initializeTools } from "./mcp-nodes";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { MessagesPlaceholder } from "@langchain/core/prompts";
 
+// Initialize tools
+let pgTools: any = [];
+let pythonTools: any = [];
+let cleanup = { pgCleanup: async () => {}, pythonCleanup: async () => {} };
 
+// Initialize the tools immediately
+(async () => {
+  const tools = await initializeTools();
+  pgTools = tools.pgTools;
+  pythonTools = tools.pythonTools;
+  cleanup = {
+    pgCleanup: tools.pgCleanup,
+    pythonCleanup: tools.pythonCleanup
+  };
+})().catch(error => {
+  console.error("Failed to initialize tools:", error);
+});
 
 export const ResearchTeamState = Annotation.Root({
   messages: Annotation<BaseMessage[]>({
