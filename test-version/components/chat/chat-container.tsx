@@ -4,7 +4,6 @@ import React from "react";
 import { useChat } from "@/hooks/useChat";
 import { MessagePanel } from "@/components/chat/MessagePanel";
 import { MessageComposer } from "@/components/chat/MessageComposer";
-import { useSidebar } from "@/components/ui/sidebar";
 
 type ChatContainerProps = {
   chatId: string;

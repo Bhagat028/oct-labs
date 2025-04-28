@@ -4,41 +4,48 @@ import { chat } from '@/lib/db/schema';
 import { nanoid } from 'nanoid';
 import { createClient } from '@/utils/supabase/Server';
 
-// POST - Create a new chat
+// It's fine here if createClient() needs request-specific context like cookies/session
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
     
-    // Verify user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
+    // Auth check
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
     
-    if (!user) {
+    if (authError || !user) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
+        { error: 'Unauthorized', details: authError?.message },
         { status: 401 }
       );
     }
 
-    // Parse request body
+    // Parse body
     const body = await request.json();
     const { title = 'New Chat' } = body;
 
-    // Create a new chat in the database with UUID
-    // Note: we don't need to specify id or createdAt as they have defaults
+    // Insert new chat
     const [newChat] = await db
       .insert(chat)
       .values({
         title,
         userId: user.id,
-        visibility: 'private', // Default visibility
+        visibility: 'private',
       })
       .returning();
 
+    if (!newChat) {
+      return NextResponse.json(
+        { error: 'Failed to create chat' },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(newChat);
+
   } catch (error) {
     console.error('Error creating new chat:', error);
     return NextResponse.json(
-      { error: 'Failed to create chat', details: String(error) },
+      { error: 'Failed to create chat', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

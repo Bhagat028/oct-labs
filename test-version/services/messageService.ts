@@ -195,10 +195,11 @@ export const messageService = {
   /**
    * Fetch messages for a specific chat
    */
-  async fetchMessages(chatId: string): Promise<Message[]> {
+  async fetchMessages(chatId: string, options?: { signal?: AbortSignal }): Promise<Message[]> {
     return enhancedFetch<Message[]>(`/api/chat/${chatId}/messages`, {
       useCache: true,
-      cacheTTL: 30000 // 30 seconds TTL for messages
+      cacheTTL: 30000, // 30 seconds TTL for messages
+      ...(options?.signal && { signal: options.signal })
     });
   },
   
