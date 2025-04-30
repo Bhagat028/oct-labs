@@ -6,34 +6,44 @@ import { fetchDatabaseUrl } from '@/lib/db-utils'
 
 export default function TestDbUrlPage() {
   const [dbUrl, setDbUrl] = useState<string | null>(null)
+  const [schema, setSchema] = useState<any | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const getDbUrl = async () => {
+    const getData = async () => {
       try {
         const url = await fetchDatabaseUrl()
         setDbUrl(url)
-      } catch (error) {
-        setError("Error retrieving database URL")
-        console.error(error)
+
+        const schemaRes = await fetch('/api/get-context')
+        const schemaJson = await schemaRes.json()
+
+        if (schemaRes.ok) {
+          setSchema(schemaJson.schema)
+        } else {
+          throw new Error(schemaJson.error || "Failed to load schema")
+        }
+      } catch (err) {
+        console.error(err)
+        setError("Error retrieving database URL or schema")
       } finally {
         setIsLoading(false)
       }
     }
-    
-    getDbUrl()
+
+    getData()
   }, [])
 
   return (
     <div className="container mx-auto py-10">
-      <Card className="max-w-md mx-auto">
+      <Card className="max-w-md mx-auto mb-6">
         <CardHeader>
           <CardTitle>Database URL</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center p-4">Loading database URL...</div>
+            <div className="text-center p-4">Loading...</div>
           ) : error ? (
             <div className="p-3 border rounded-md bg-destructive/10 mb-4 text-destructive">
               {error}
@@ -49,6 +59,19 @@ export default function TestDbUrlPage() {
           )}
         </CardContent>
       </Card>
+
+      {schema && (
+        <Card className="max-w-3xl mx-auto">
+          <CardHeader>
+            <CardTitle>Database Schema</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre className="text-xs bg-muted p-4 rounded overflow-auto max-h-[400px]">
+              {JSON.stringify(schema, null, 2)}
+            </pre>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

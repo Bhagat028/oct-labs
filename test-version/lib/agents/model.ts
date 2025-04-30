@@ -46,7 +46,7 @@ const superviourllm = new ChatOpenAI({
 // });
 
   const  SQLllm = new ChatOpenAI({
-    modelName: 'meta-llama/llama-3.3-70b-instruct',
+    modelName: 'anthropic/claude-3.5-sonnet:beta',
     temperature: 0.2,
     maxTokens: 1000,
     openAIApiKey: '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',

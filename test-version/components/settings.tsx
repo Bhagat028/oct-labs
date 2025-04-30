@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Cable, Loader2 } from "lucide-react"
 import { createBrowserClient } from '@supabase/ssr'
-import type { SupabaseClient } from '@supabase/supabase-js'
 import {
   Dialog,
   DialogContent,
@@ -109,13 +108,14 @@ function useDatabaseUrl() {
   }, [isAuthenticated, supabase])
   
   const saveUrl = useCallback(async (url: string): Promise<boolean> => {
-    if (!isAuthenticated) return false
-    setIsSaving(true)
-    
+    if (!isAuthenticated) return false;
+    setIsSaving(true);
+  
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return false
-      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return false;
+  
+      // 1. Save DB URL to iron-session
       const response = await fetch('/api/save-db-url', {
         method: 'POST',
         headers: {
@@ -123,60 +123,113 @@ function useDatabaseUrl() {
           'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({ url: url.trim() })
-      })
-      
-      if (response.ok) {
-        setSavedUrl(url.trim())
-        return true
-      }
-      
-      if (response.status === 401) {
-        setIsAuthenticated(false)
-      }
-      
-      return false
-    } catch (error) {
-      console.error("Error saving URL:", error)
-      return false
-    } finally {
-      setIsSaving(false)
-    }
-  }, [isAuthenticated, supabase])
+      });
   
+      if (!response.ok) {
+        if (response.status === 401) setIsAuthenticated(false);
+        return false;
+      }
+  
+      setSavedUrl(url.trim());
+  
+      // 2. Fetch schema from external API
+      const schemaResponse = await fetch("https://dashchat-datamanger-q5up.vercel.app/api/database", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: url.trim(),
+          id: session.user.id,  // use actual Supabase user ID
+        }),
+      });
+  
+      if (!schemaResponse.ok) {
+        console.error("Failed to fetch schema from dashchat-datamanger");
+        return true; // still consider URL saved even if schema fetch failed
+      }
+  
+      const schema = await schemaResponse.json();
+  
+      // 3. Cache schema in Edge Config
+      await fetch("/api/cache-schema", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          
+        },
+        body: JSON.stringify({
+          userId: session.user.id,
+          schema,
+        }),
+      });
+  
+      return true;
+    } catch (error) {
+      console.error("Error saving URL and schema:", error);
+      return false;
+    } finally {
+      setIsSaving(false);
+    }
+  }, [isAuthenticated, supabase]);
+  
+
+
   const deleteUrl = useCallback(async (): Promise<boolean> => {
-    if (!isAuthenticated) return false
-    setIsSaving(true)
+    if (!isAuthenticated) return false;
+    setIsSaving(true);
     
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return false
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return false;
       
-      const response = await fetch('/api/save-db-url', {
-        method: 'POST',
+      // Schema cache clearing code has been removed
+      
+      // Now delete the URL
+      const response = await fetch('/api/get-db-url', {
+        method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ url: '' }) // Empty URL to delete
-      })
+        }
+      });
       
-      if (response.ok) {
-        setSavedUrl("")
-        return true
+      // Handle response
+      if (!response.ok) {
+        console.warn(`Standard deletion failed (${response.status}): ${await response.text()}`);
+        
+        // Try clearing the entire session as a fallback
+        const clearResponse = await fetch('/api/clear-session', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+        
+        if (clearResponse.ok) {
+          console.log("Successfully cleared session as fallback");
+          setSavedUrl("");
+          return true;
+        }
+        
+        if (response.status === 401 || clearResponse.status === 401) {
+          setIsAuthenticated(false);
+          console.error("Authentication failed during URL deletion");
+        }
+        
+        return false;
       }
       
-      if (response.status === 401) {
-        setIsAuthenticated(false)
-      }
-      
-      return false
+      console.log("Database URL deleted successfully");
+      setSavedUrl("");
+      return true;
     } catch (error) {
-      console.error("Error deleting URL:", error)
-      return false
+      console.error("Error deleting URL:", error);
+      return false;
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }, [isAuthenticated, supabase])
+  }, [isAuthenticated, supabase]);
+  
   
   return { savedUrl, saveUrl, deleteUrl, isLoading, isAuthenticated, isSaving }
 }
