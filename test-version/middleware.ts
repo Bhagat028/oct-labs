@@ -1,7 +1,8 @@
 import { type NextRequest } from 'next/server'
-import { updateSession } from '@/utils/supabase/middleware'
+import { updateSession } from '@/utils/supabase/middleware' // Make sure this path is correct
 
 export async function middleware(request: NextRequest) {
+  // This will now run for all matched paths, including your /api/ routes
   return await updateSession(request)
 }
 
@@ -12,9 +13,10 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - api/ (API routes)
-     * Feel free to modify this pattern to include more paths.
+     * - specific file extensions (svg, png, etc.)
+     *
+     * IMPORTANT: Removed the |api/| exclusion. API routes will now pass through middleware.
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

@@ -1,13 +1,13 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { ChatGroq } from "@langchain/groq";
-import { ChatCerebras } from "@langchain/cerebras";
-const cerebras_api_key = "csk-j54r63jt99m6rw43evwtv9ek3wr2pwtcndhh9h585fettw4m"
-const groq_api_key = "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";
+// import { ChatGroq } from "@langchain/groq";
+// import { ChatCerebras } from "@langchain/cerebras";
+// const cerebras_api_key = "csk-j54r63jt99m6rw43evwtv9ek3wr2pwtcndhh9h585fettw4m"
+// const groq_api_key = "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";
 const superviourllm = new ChatOpenAI({
     modelName: 'openai/gpt-4.1',
     temperature: 0.2,
     maxTokens: 500,
-    openAIApiKey: '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',
+    openAIApiKey: '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',
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
@@ -49,7 +49,7 @@ const superviourllm = new ChatOpenAI({
     modelName: 'anthropic/claude-3.5-sonnet:beta',
     temperature: 0.2,
     maxTokens: 1000,
-    openAIApiKey: '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',
+    openAIApiKey: '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',
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
@@ -63,7 +63,7 @@ const superviourllm = new ChatOpenAI({
     modelName: 'deepseek/deepseek-chat-v3-0324',
     temperature: 0.2,
     maxTokens: 1000,
-    openAIApiKey: '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',
+    openAIApiKey: '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',
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {
@@ -77,7 +77,7 @@ const superviourllm = new ChatOpenAI({
     temperature: 0.2,
     
     maxTokens: 1000,
-    openAIApiKey: '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',
+    openAIApiKey: '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',
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
       defaultHeaders: {

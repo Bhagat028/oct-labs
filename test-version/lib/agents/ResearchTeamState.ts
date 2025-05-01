@@ -111,7 +111,7 @@ const databaseContext = `{
 export const pgNode = (state: typeof ResearchTeamState.State) => {
   const stateModifier = agentStateModifier(
     "You are a database expert who can use CTE query PostgreSQL databases for information\n"
-    + `databse schema: ${databaseContext}`,
+  ,
     pgTools,
     state.team_members ?? ["DatabaseExpert"]
   );
